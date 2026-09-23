@@ -452,16 +452,10 @@
       <input type="text" id="id-card" placeholder="x-xxxx-xxxxx-xx-x" maxlength="13" inputmode="numeric" />
     </div>
 
-    <div class="field-row">
-      <div class="field">
-        <label for="first-name">ชื่อ (ภาษาอังกฤษ) <span class="req">*</span></label>
-        <input type="text" id="first-name" placeholder="FIRSTNAME" />
-      </div>
-      <div class="field">
-        <label for="last-name">นามสกุล (ภาษาอังกฤษ) <span class="req">*</span></label>
-        <input type="text" id="last-name" placeholder="LASTNAME" />
-      </div>
-    </div>
+    <div class="field">
+      <label for="full-name">ชื่อ-นามสกุล (ภาษาอังกฤษ) <span class="req">*</span></label>
+      <input type="text" id="full-name" placeholder="FIRSTNAME LASTNAME" />
+   </div>
 
     <div class="field">
       <label for="exam-date">วันที่สอบ <span class="req">*</span></label>
@@ -517,24 +511,21 @@
 
   function handleSearch() {
     const idInput    = document.getElementById('id-card');
-    const firstInput = document.getElementById('first-name');
-    const lastInput  = document.getElementById('last-name');
+    const fullNameInput = document.getElementById('full-name');
     const dateInput  = document.getElementById('exam-date');
     _btn      = document.getElementById('btn-search');
     _resultEl = document.getElementById('result');
 
-    [idInput, firstInput, lastInput, dateInput].forEach(el => el.classList.remove('error'));
+    [idInput, fullNameInput, dateInput].forEach(el => el.classList.remove('error'));
     _resultEl.style.display = 'none';
 
     const idVal     = idInput.value.trim().replace(/[-\s]/g, '');
-    const firstName = firstInput.value.trim().toUpperCase();
-    const lastName  = lastInput.value.trim().toUpperCase();
+    const fullName = fullNameInput.value.trim().toUpperCase();
     const dateVal   = dateInput.value;
 
     let hasError = false;
     if (!/^\d{13}$/.test(idVal))  { idInput.classList.add('error');    hasError = true; }
-    if (!firstName)                { firstInput.classList.add('error'); hasError = true; }
-    if (!lastName)                 { lastInput.classList.add('error');  hasError = true; }
+    if (fullName.length < 3) { fullNameInput.classList.add('error'); hasError = true; }
     if (!dateVal)                  { dateInput.classList.add('error');  hasError = true; }
     if (hasError) return;
 
@@ -545,9 +536,8 @@
     // JSONP — ข้าม CORS ได้เลย
     const cbName = 'gasCallback_' + Date.now();
     const params = new URLSearchParams({
-      id_card: idVal, first_name: firstName,
-      last_name: lastName, exam_date: dateVal,
-      callback: cbName
+    id_card: idVal, full_name: fullName,
+    exam_date: dateVal, callback: cbName
     });
 
     window[cbName] = function(data) {
@@ -636,7 +626,7 @@
     this.value = this.value.replace(/\D/g, '').slice(0, 13);
     this.classList.remove('error');
   });
-  ['first-name','last-name'].forEach(id => {
+  ['full-name'].forEach(id => {
     document.getElementById(id).addEventListener('input', function() {
       this.value = this.value.toUpperCase();
       this.classList.remove('error');
