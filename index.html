@@ -148,6 +148,30 @@
       line-height: 1.8;
       text-align: left;
     }
+   .type-toggle {
+     display: flex;
+     gap: 10px;
+     margin-top: 4px;
+   }
+   .type-btn {
+     flex: 1;
+     padding: 11px;
+     border: 1px solid #CCCCCC;
+     background: var(--white);
+     color: var(--gray-text);
+     border-radius: 3px;
+     font-family: 'Sarabun', sans-serif;
+     font-size: 14px;
+     font-weight: 600;
+     cursor: pointer;
+     transition: all 0.15s;
+    }
+  .type-btn:hover { border-color: var(--red); }
+  .type-btn.active {
+     background: var(--red);
+     border-color: var(--red);
+     color: var(--white);
+   }
 
     /* ── Main content ── */
     .main {
@@ -448,14 +472,26 @@
     <div class="card-title">ข้อมูลผู้สอบ</div>
 
     <div class="field">
-      <label for="id-card">เลขบัตรประชาชน <span class="req">*</span><span class="hint-inline">13 หลัก ไม่ต้องใส่ขีด</span></label>
+      <label>ประเภทผู้สอบ <span class="req">*</span></label>
+      <div class="type-toggle">
+        <button type="button" class="type-btn active" id="btn-thai" onclick="setDocType('thai')">
+          🇹🇭 คนไทย
+        </button>
+        <button type="button" class="type-btn" id="btn-foreign" onclick="setDocType('foreign')">
+          🌐 ชาวต่างชาติ
+        </button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="id-card" id="id-card-label">เลขบัตรประชาชน <span class="req">*</span><span class="hint-inline" id="id-card-hint">13 หลัก ไม่ต้องใส่ขีด</span></label>
       <input type="text" id="id-card" placeholder="x-xxxx-xxxxx-xx-x" maxlength="13" inputmode="numeric" />
     </div>
 
     <div class="field">
       <label for="full-name">ชื่อ-นามสกุล (ภาษาอังกฤษ) <span class="req">*</span></label>
       <input type="text" id="full-name" placeholder="FIRSTNAME LASTNAME" />
-   </div>
+    </div>
 
     <div class="field">
       <label for="exam-date">วันที่สอบ <span class="req">*</span></label>
@@ -505,8 +541,37 @@
 <div class="toast" id="toast">คัดลอกแล้ว ✓</div>
 
 <script>
-  const GAS_URL = 'https://script.google.com/macros/s/AKfycby3hFQiq3JSlHNhAU0i4r4Gvn82WsZklHNHyKnWXWDKyEJrRLpkigOOSbBtcnhz4tE/exec';
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbwczv188mMRmRRiWoESjwB3wguES7xKs63ejrvLMYbrwxjhuuI_NHa98a5E8wpXFvY/exec';
 
+  let currentDocType = 'thai';
+
+function setDocType(type) {
+  currentDocType = type;
+
+  document.getElementById('btn-thai').classList.toggle('active', type === 'thai');
+  document.getElementById('btn-foreign').classList.toggle('active', type === 'foreign');
+
+  const idInput = document.getElementById('id-card');
+  const label   = document.getElementById('id-card-label');
+  const hint    = document.getElementById('id-card-hint');
+
+  idInput.value = '';
+  idInput.classList.remove('error');
+
+  if (type === 'foreign') {
+    label.childNodes[0].textContent = 'หมายเลข Passport ';
+    hint.textContent = 'ไม่ต้องเว้นวรรค';
+    idInput.placeholder = 'PASSPORT NUMBER';
+    idInput.maxLength = 20;
+    idInput.inputMode = 'text';
+  } else {
+    label.childNodes[0].textContent = 'เลขบัตรประชาชน ';
+    hint.textContent = '13 หลัก ไม่ต้องใส่ขีด';
+    idInput.placeholder = 'x-xxxx-xxxxx-xx-x';
+    idInput.maxLength = 13;
+    idInput.inputMode = 'numeric';
+  }
+}
   let _btn, _resultEl;
 
   function handleSearch() {
@@ -524,7 +589,8 @@
     const dateVal   = dateInput.value;
 
     let hasError = false;
-    if (!/^\d{13}$/.test(idVal))  { idInput.classList.add('error');    hasError = true; }
+    const idPattern = currentDocType === 'thai' ? /^\d{13}$/ : /^[A-Z0-9]{5,20}$/;
+    if (!idPattern.test(idVal)) { idInput.classList.add('error'); hasError = true; }
     if (fullName.length < 3) { fullNameInput.classList.add('error'); hasError = true; }
     if (!dateVal)                  { dateInput.classList.add('error');  hasError = true; }
     if (hasError) return;
@@ -623,9 +689,13 @@
   document.addEventListener('keydown', e => { if (e.key === 'Enter') handleSearch(); });
 
   document.getElementById('id-card').addEventListener('input', function() {
+  if (currentDocType === 'thai') {
     this.value = this.value.replace(/\D/g, '').slice(0, 13);
-    this.classList.remove('error');
-  });
+  } else {
+    this.value = this.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 20);
+  }
+  this.classList.remove('error');
+ });
   ['full-name'].forEach(id => {
     document.getElementById(id).addEventListener('input', function() {
       this.value = this.value.toUpperCase();
