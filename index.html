@@ -472,13 +472,13 @@
     <div class="card-title">ข้อมูลผู้สอบ</div>
 
     <div class="field">
-      <label>ประเภทผู้สอบ <span class="req">*</span></label>
+      <label>Nationality <span class="req">*</span></label>
       <div class="type-toggle">
         <button type="button" class="type-btn active" id="btn-thai" onclick="setDocType('thai')">
-          🇹🇭 คนไทย
+          ผู้สอบสัญชาติไทย
         </button>
         <button type="button" class="type-btn" id="btn-foreign" onclick="setDocType('foreign')">
-          🌐 ชาวต่างชาติ
+          Foreigner
         </button>
       </div>
     </div>
@@ -489,18 +489,18 @@
     </div>
 
     <div class="field">
-      <label for="full-name">ชื่อ-นามสกุล (ภาษาอังกฤษ) <span class="req">*</span></label>
-      <input type="text" id="full-name" placeholder="FIRSTNAME LASTNAME" />
+      <label for="full-name">Name <span class="req">*</span></label>
+      <input type="text" id="full-name" placeholder="Full Name Same as Passport / ID" />
     </div>
 
     <div class="field">
-      <label for="exam-date">วันที่สอบ <span class="req">*</span></label>
+      <label for="exam-date">Test Date <span class="req">*</span></label>
       <input type="date" id="exam-date" />
     </div>
 
     <div class="btn-wrap">
       <button class="btn-search" id="btn-search" onclick="handleSearch()">
-        ค้นหาเลข EMS Tracking
+        Find EMS Tracking Number
         <span class="spinner"></span>
       </button>
     </div>
@@ -538,7 +538,7 @@
   </div>
 </footer>
 
-<div class="toast" id="toast">คัดลอกแล้ว ✓</div>
+<div class="toast" id="toast">Copy ✓</div>
 
 <script>
   const GAS_URL = 'https://script.google.com/macros/s/AKfycbwczv188mMRmRRiWoESjwB3wguES7xKs63ejrvLMYbrwxjhuuI_NHa98a5E8wpXFvY/exec';
@@ -559,8 +559,8 @@ function setDocType(type) {
   idInput.classList.remove('error');
 
   if (type === 'foreign') {
-    label.childNodes[0].textContent = 'หมายเลข Passport ';
-    hint.textContent = 'ไม่ต้องเว้นวรรค';
+    label.childNodes[0].textContent = 'Passport Number ';
+    hint.textContent = 'Only Number';
     idInput.placeholder = 'PASSPORT NUMBER';
     idInput.maxLength = 20;
     idInput.inputMode = 'text';
@@ -618,14 +618,14 @@ function setDocType(type) {
           ? formatDate(data.dispatch_date) : 'รอดำเนินการ';
         _resultEl.innerHTML = `
           <div class="result-success">
-            <div class="result-tag">✓ พบข้อมูล</div>
+            <div class="result-tag">✓</div>
             <div class="result-grid">
               <div class="result-item">
-                <div class="item-label">หมายเลข Tracking</div>
+                <div class="item-label">Tracking Number</div>
                 <div class="tracking-val">${data.tracking}</div>
               </div>
               <div class="result-item">
-                <div class="item-label">วันที่ส่งออก</div>
+                <div class="item-label">Sent Date</div>
                 <div class="dispatch-val">${dispatchText}</div>
               </div>
             </div>
@@ -633,10 +633,10 @@ function setDocType(type) {
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
               </svg>
-              คัดลอกเลข Tracking
+              Copy Tracking Number
             </button>
             <a href="https://track.thailandpost.co.th/?trackNumber=${data.tracking}" target="_blank" class="copy-btn" style="text-decoration:none;margin-left:8px;">
-            🌐 ติดตามที่ไปรษณีย์ไทย
+            🌐 Thailand Post / ไปรษณีย์
             </a>
           </div>`;
       } else if (data.status === 'not_found') {
