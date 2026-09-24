@@ -672,10 +672,10 @@ function setDocType(type) {
     document.body.appendChild(script);
   }
 
-  function formatDate(dateStr) {
-    const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+   function formatDate(dateStr) {
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const [y, m, d] = dateStr.split('-');
-    return `${parseInt(d)} ${months[parseInt(m)-1]} ${parseInt(y)+543}`;
+    return `${months[parseInt(m)-1]} ${parseInt(d)}, ${parseInt(y)}`;
   }
 
   function copyTracking(text) {
